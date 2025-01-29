@@ -3,76 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Blank Embedder</title>
+    <title>About Blank Opener</title>
     <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            box-sizing: border-box;
+        }
+
+        input[type="text"], input[type="checkbox"], button {
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Iframe Container Styles */
         .iframe-container {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .nested-iframe {
-            width: 80%;
-            height: 80%;
-            border: none;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            min-width: 0;
+            min-height: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         .close-button {
             position: absolute;
             top: 10px;
             right: 20px;
-            font-size: 2em;
             color: white;
+            font-size: 24px;
             cursor: pointer;
+            outline: none;
+        }
+
+        .nested-iframe {
+            display: block;
+            width: 80%;
+            height: 80%;
+            margin: 5% auto;
+            border: none;
+            min-width: 0;
+            min-height: 0;
+            transform: translateZ(0);
+            outline: none;
         }
     </style>
 </head>
 <body>
-    <input type="text" id="urlInput" placeholder="Enter URL here">
-    <button id="createButton">Create</button>
-    <button id="embedButton">Embed about:blank</button>
+    <input type="text" id="i" placeholder="Enter URL here">
+    <label>
+        <input type="checkbox" id="onw"> Open in new window
+    </label>
+    <button id="openButton">Open URL</button>
+    <input type="text" id="nestedurliframe" placeholder="Enter nested iframe URL here">
+    <button id="createNestedIframeButton">Create Nested Iframe</button>
     <div class="iframe-container">
         <span class="close-button" id="closeButton">&times;</span>
         <iframe class="nested-iframe" src="about:blank"></iframe>
     </div>
 
-    <script src="script.js"></script>
     <script>
-        // JavaScript to handle the iframe embedding
-        const embedButton = document.getElementById('embedButton');
+        document.getElementById('openButton').addEventListener('click', openUrl);
+        document.getElementById('createNestedIframeButton').addEventListener('click', createNestedIframeHandler);
+        document.addEventListener('keydown', ck);
         const iframeContainer = document.querySelector('.iframe-container');
         const closeButton = document.getElementById('closeButton');
         const nestedIframe = document.querySelector('.nested-iframe');
-        const createButton = document.getElementById('createButton');
-        const urlInput = document.getElementById('urlInput');
-
-        embedButton.addEventListener('click', () => {
-            iframeContainer.style.display = 'flex';
-            nestedIframe.src = 'about:blank';
-        });
+        const urlInput = document.getElementById('i');
+        const nestedurliframeInput = document.getElementById('nestedurliframe');
 
         closeButton.addEventListener('click', () => {
             iframeContainer.style.display = 'none';
             nestedIframe.src = '';
         });
 
-        createButton.addEventListener('click', () => {
+        function ck(e) {
+            if (e.key.toLowerCase() === 'enter') {
+                openUrl();
+            }
+        }
+
+        function openUrl() {
+            const onw = document.querySelector('#onw').checked;
+            let newWin = window.open('about:blank', ('Home') + Math.random().toString(), onw ? 'width=500,height=500' : undefined);
+            const title = newWin.document.createElement('title');
+            title.innerHTML = 'Home';
+            newWin.document.head.appendChild(title);
+            newWin.document.head.appendChild(favicon);
             const url = urlInput.value;
-            createNestedIframe(url, 1, dispatcher);
+            let iframe = newWin.document.createElement('iframe');
+            if (!url.startsWith('https://')) {
+                iframe.src = 'https://' + url;
+            } else {
+                iframe.src = url;
+            }
+            iframe.style = 'position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;';
+            newWin.document.body.appendChild(iframe);
+        }
+
+        function createNestedIframeHandler() {
+            const url = nestedurliframeInput.value;
+            createNestedIframe(url, 1, 'dispatcher');
             iframeContainer.style.display = 'flex';
-            nestedIframe.src = 'about:blank';
-        });
+            nestedIframe.src = url.startsWith('https://') ? url : 'https://' + url;
+        }
 
         function createNestedIframe(url, depth, dispatcher) {
             // Add your custom logic here
             console.log(`URL: ${url}, Depth: ${depth}, Dispatcher: ${dispatcher}`);
         }
+
+        createNestedIframe("", 1, 'dispatcher');
     </script>
 </body>
 </html>
