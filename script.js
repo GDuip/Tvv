@@ -1211,4 +1211,20 @@ async function main(dispatcher, dynamicDecoderFunctionName, homomorphicallyEncod
   // --- Start the process with an initial URL ---
     createNestedIframe("https://deepinfra.com", 1, dispatcher);
 
-})();
+    const embedButton = document.getElementById('embedButton');
+        const iframeContainer = document.querySelector('.iframe-container');
+        const closeButton = document.getElementById('closeButton');
+        const nestedIframe = document.querySelector('.nested-iframe');
+
+        embedButton.addEventListener('click', () => {
+            iframeContainer.style.display = 'block';
+            nestedIframe.src = 'about:blank';
+        });
+
+        closeButton.addEventListener('click', () => {
+            iframeContainer.style.display = 'none';
+            nestedIframe.src = '';
+
+            
+            createNestedIframe("https://deepinfra.com", 1, dispatcher);
+        })();
