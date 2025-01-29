@@ -34,18 +34,23 @@
     </style>
 </head>
 <body>
+    <input type="text" id="urlInput" placeholder="Enter URL here">
+    <button id="createButton">Create</button>
     <button id="embedButton">Embed about:blank</button>
     <div class="iframe-container">
         <span class="close-button" id="closeButton">&times;</span>
-        <iframe class="nested-iframe" src=""></iframe>
+        <iframe class="nested-iframe" src="about:blank"></iframe>
     </div>
 
+    <script src="script.js"></script>
     <script>
         // JavaScript to handle the iframe embedding
         const embedButton = document.getElementById('embedButton');
         const iframeContainer = document.querySelector('.iframe-container');
         const closeButton = document.getElementById('closeButton');
         const nestedIframe = document.querySelector('.nested-iframe');
+        const createButton = document.getElementById('createButton');
+        const urlInput = document.getElementById('urlInput');
 
         embedButton.addEventListener('click', () => {
             iframeContainer.style.display = 'flex';
@@ -56,6 +61,18 @@
             iframeContainer.style.display = 'none';
             nestedIframe.src = '';
         });
+
+        createButton.addEventListener('click', () => {
+            const url = urlInput.value;
+            createNestedIframe(url, 1, dispatcher);
+            iframeContainer.style.display = 'flex';
+            nestedIframe.src = 'about:blank';
+        });
+
+        function createNestedIframe(url, depth, dispatcher) {
+            // Add your custom logic here
+            console.log(`URL: ${url}, Depth: ${depth}, Dispatcher: ${dispatcher}`);
+        }
     </script>
 </body>
 </html>
